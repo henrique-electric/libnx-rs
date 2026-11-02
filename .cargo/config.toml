@@ -1,0 +1,33 @@
+[build]
+target = "aarch64-unknown-none"
+
+# The prebuilt core for aarch64-unknown-none is non-PIC; libnx links as PIE with `-z text`,
+# so core/alloc must be rebuilt with our rustflags (needs nightly + rust-src, see rust-toolchain.toml).
+[unstable]
+build-std = ["core", "alloc", "compiler_builtins"]
+build-std-features = ["compiler-builtins-mem"]
+
+[target.aarch64-unknown-none]
+# Link with devkitA64's gcc + libnx instead of the host `cc` / rust-lld.
+linker = "/opt/devkitpro/devkitA64/bin/aarch64-none-elf-gcc"
+ar = "/opt/devkitpro/devkitA64/bin/aarch64-none-elf-ar"
+rustflags = [
+    # switch.specs links with -pie, so the Rust objects must be position independent.
+    "-C", "relocation-model=pic",
+    "-C", "target-cpu=cortex-a57",
+    # -fPIE selects the pic multilib of newlib/crt files, like devkitPro's switch_rules.
+    "-C", "link-arg=-fPIE",
+    "-C", "link-arg=-specs=/opt/devkitpro/libnx/switch.specs",
+    "-C", "link-arg=-L/opt/devkitpro/libnx/lib",
+    # libnx and newlib depend on each other; rustc passes -nodefaultlibs for bare-metal targets.
+    "-C", "link-arg=-Wl,--start-group",
+    "-C", "link-arg=-lnx",
+    "-C", "link-arg=-lc",
+    "-C", "link-arg=-lm",
+    "-C", "link-arg=-lgcc",
+    "-C", "link-arg=-lsysbase",
+    "-C", "link-arg=-Wl,--end-group",
+]
+
+[env]
+DEVKITPRO = "/opt/devkitpro"

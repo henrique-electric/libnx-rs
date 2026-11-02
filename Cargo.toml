@@ -1,0 +1,19 @@
+[package]
+name = "Rust"
+version = "0.1.0"
+edition = "2024"
+authors = ["libnx Authors"]
+license-file = "LICENSE.md"
+
+[profile.dev]
+panic = "abort"
+
+[lib]
+name = "libnx"
+path = "src/lib.rs"
+
+[features]
+# Mirrors libnx's NX_SERVICE_ASSUME_NON_DOMAIN: lets the compiler assume services are never domains.
+service-assume-non-domain = []
+
+[dependencies]
