@@ -1,9 +1,10 @@
 [package]
-name = "Rust"
+name = "libnx-rs"
 version = "0.1.0"
 edition = "2024"
 authors = ["libnx Authors"]
 license-file = "LICENSE.md"
+repository = "https://github.com/henrique-electric/libnx-rs"
 
 [profile.dev]
 panic = "abort"
